@@ -7,9 +7,18 @@ services:
       - "8888:8888"
     networks:
       - financer-network
+    restart: always
+  eureka-server:
+    container_name: eureka-server
+    build: ./eureka-server
+    ports: 
+      - "8761:8761"
+    networks:
+      - financer-network
     restart: always  
   mysqldb:
     image: mysql:5.7
+    container_name: mysqldb
     ports: 
       - "3306:3306"
     networks:

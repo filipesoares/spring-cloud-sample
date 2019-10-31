@@ -8,8 +8,9 @@
 		<version>2.1.8.RELEASE</version>
 		<relativePath/>
 	</parent>
+
 	<groupId>br.com.financer</groupId>
-	<artifactId>eureka</artifactId>
+	<artifactId>eureka-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>EurekaServer</name>
 	<description>Eureka Server to service Registry</description>
@@ -45,6 +46,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
