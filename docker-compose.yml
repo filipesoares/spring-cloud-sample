@@ -24,9 +24,37 @@ services:
     networks:
       - financer-network
     restart: always
-    environment: 
+    environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: financer    
+      MYSQL_DATABASE: financer
+      MYSQL_ROOT_PASSWORD: s3cr3t      
+  users-api:
+    container_name: users-api
+    build: ./users-api
+    ports: 
+      - "8082:8082"
+    networks:
+      - financer-network
+    restart: always    
+    links: 
+      - config-server
+      - eureka-server
+      - mysqldb
+    depends_on:
+      - config-server
+      - eureka-server
+      - mysqldb
+    entrypoint: /bin/sh
+    environment: 
+      MYSQL_URL: jdbc:mysql://mysqldb:3306/financer
+      MYSQL_USER: root
+      MYSQL_PASSWORD: s3cr3t
+      EUREKA_SERVER: http://eureka-server:8761/eureka/
+    command: >
+      -c "
+      while ! (nc -z config-server 8888 && nc -z eureka-server 8761 && nc -z mysqldb 3306); do sleep 5; echo 'Waiting for other services to start-up...'; done;
+      java -Djava.security.egd=file:/dev/./urandom -jar -Dspring.profiles.active=dev /users-api.jar
+      " 
 networks:
   financer-network:
     driver: bridge
