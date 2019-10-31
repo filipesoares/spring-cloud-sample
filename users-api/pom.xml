@@ -8,7 +8,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>br.com.financer</groupId>
-	<artifactId>users</artifactId>
+	<artifactId>users-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>users</name>
 	<description>Users api</description>
@@ -86,8 +86,20 @@
 	
 	<profiles>
 		<profile>
+	        <id>local</id>
+	        <properties>
+	            <spring.profiles.active>local</spring.profiles.active>
+	        </properties>
+	        <dependencies>
+	        	<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+				</dependency>
+	        </dependencies>
+	    </profile>
+		<profile>
 	        <id>dev</id>
-	        <activation>
+			<activation>
 	            <activeByDefault>true</activeByDefault>
 	        </activation>
 	        <properties>
@@ -95,8 +107,9 @@
 	        </properties>
 	        <dependencies>
 	        	<dependency>
-					<groupId>com.h2database</groupId>
-					<artifactId>h2</artifactId>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 	        </dependencies>
 	    </profile>
@@ -116,7 +129,7 @@
 	</profiles>
 
 	<build>
-	
+		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
