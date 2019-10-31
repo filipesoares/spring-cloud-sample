@@ -1,5 +1,13 @@
 version: "3"
 services:
+  config-server:
+    container_name: config-server
+    build: ./config-server
+    ports: 
+      - "8888:8888"
+    networks:
+      - financer-network
+    restart: always  
   mysqldb:
     image: mysql:5.7
     ports: 

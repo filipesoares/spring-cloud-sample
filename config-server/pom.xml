@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>br.com.financer</groupId>
-	<artifactId>config</artifactId>
+	<artifactId>config-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Config Server</name>
 	<description>Config Server for Financer apps</description>
@@ -45,6 +45,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
