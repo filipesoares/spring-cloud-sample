@@ -53,8 +53,28 @@ services:
     command: >
       -c "
       while ! (nc -z config-server 8888 && nc -z eureka-server 8761 && nc -z mysqldb 3306); do sleep 5; echo 'Waiting for other services to start-up...'; done;
-      java -Djava.security.egd=file:/dev/./urandom -jar -Dspring.profiles.active=dev /users-api.jar
-      " 
+      java -Djava.security.egd=file:/dev/./urandom -jar -Dspring.profiles.active=dev /users-api.jar"
+  accounts-api:
+    container_name: accounts-api
+    restart: always
+    build: ./accounts-api
+    ports:
+      - "3000:3000"
+    links:
+      - mongodb
+    depends_on:
+      - "mongodb"
+      - "users-api"
+    env_file: ./accounts-api/.env
+    networks:
+      - financer-network    
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports: 
+      - "27017:27017"
+    networks:
+      - financer-network 
 networks:
   financer-network:
     driver: bridge
