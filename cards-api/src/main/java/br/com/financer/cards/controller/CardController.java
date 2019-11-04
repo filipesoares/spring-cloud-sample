@@ -23,36 +23,36 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.financer.cards.model.User;
-import br.com.financer.cards.service.UserService;
+import br.com.financer.cards.model.Card;
+import br.com.financer.cards.service.CardService;
 
 @RestController
-@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class UserController {
+@RequestMapping(value = "/cards", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+public class CardController {
 	
-	private UserService service;
+	private CardService service;
 	
-	public UserController(UserService service) {
+	public CardController(CardService service) {
 		this.service = service;
 	}
 	
 	@GetMapping
-	public ResponseEntity<Page<User>> list(@PageableDefault(sort = "id", direction = ASC) Pageable page) {
-		return new ResponseEntity<Page<User>>(service.list(page), HttpStatus.OK);
+	public ResponseEntity<Page<Card>> list(@PageableDefault(sort = "id", direction = ASC) Pageable page) {
+		return new ResponseEntity<Page<Card>>(service.list(page), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<User> fetch(@PathVariable("id") Long id){
-		return new ResponseEntity<User>(service.fetch(id), HttpStatus.OK);
+	public ResponseEntity<Card> fetch(@PathVariable("id") Long id){
+		return new ResponseEntity<Card>(service.fetch(id), HttpStatus.OK);
 	}
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<Void> create(@RequestBody User user, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<Void> create(@RequestBody Card card, UriComponentsBuilder ucBuilder) {
 		try {
-			service.create(user);
+			service.create(card);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setLocation(ucBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri());
+			headers.setLocation(ucBuilder.path("/cards/{id}").buildAndExpand(card.getId()).toUri());
 			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "An error occured", e);
@@ -61,15 +61,15 @@ public class UserController {
 	
 	@PutMapping("/{id}")
 	@Transactional
-	public ResponseEntity<User> update(@PathVariable("id") Long id, @RequestBody User user, HttpServletRequest request) {
-		return new ResponseEntity<User>(service.update(user, id), HttpStatus.OK);
+	public ResponseEntity<Card> update(@PathVariable("id") Long id, @RequestBody Card card, HttpServletRequest request) {
+		return new ResponseEntity<Card>(service.update(id, card), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<User> delete(@PathVariable("id") Long id) {
-		service.remove(id);
-		return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+	public ResponseEntity<Card> delete(@PathVariable("id") Long id) {
+		service.delete(id);
+		return new ResponseEntity<Card>(HttpStatus.NO_CONTENT);
 	}
 
 }

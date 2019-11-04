@@ -32,12 +32,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import br.com.financer.cards.model.User;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+public class CardControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
@@ -80,7 +78,7 @@ public class UserControllerTest {
 		HEADERS.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 
 	}
-	
+	/*
 	@Test
 	public void listAllTest() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get(RESOURCE)
@@ -94,7 +92,7 @@ public class UserControllerTest {
 		RequestBuilder requestBuilder = 
 				MockMvcRequestBuilders
 							.post(RESOURCE)
-							.content(json(new User(null, "Jhon Doe", true, "jhon@email.com", "123456", now, new ArrayList<>())))
+							.content(json(new Card(null, "Jhon Doe", true, "jhon@email.com", "123456", now, new ArrayList<>())))
 							.headers(HEADERS); 
 				
 		mvc.perform(requestBuilder)
@@ -108,7 +106,7 @@ public class UserControllerTest {
 		RequestBuilder requestBuilder = 
 				MockMvcRequestBuilders
 							.post(RESOURCE)
-							.content(json(new User(null, "Charles Grey", true, "charles@email.com", "123456", now, new ArrayList<>())))
+							.content(json(new Card(null, "Charles Grey", true, "charles@email.com", "123456", now, new ArrayList<>())))
 							.headers(HEADERS); 
 				
 		MvcResult response = mvc.perform(requestBuilder).andExpect(status().isCreated()).andReturn();
@@ -127,20 +125,20 @@ public class UserControllerTest {
 		RequestBuilder requestBuilder = 
 				MockMvcRequestBuilders
 							.post(RESOURCE)
-							.content(json(new User(null, "Robert Grant", true, "robert@email.com", "123456", now, new ArrayList<>())))
+							.content(json(new Card(null, "Robert Grant", true, "robert@email.com", "123456", now, new ArrayList<>())))
 							.headers(HEADERS); 
 				
 		MvcResult response = mvc.perform(requestBuilder).andExpect(status().isCreated()).andReturn();
 		
 		mvc.perform(MockMvcRequestBuilders
 				.put(RESOURCE + "/" + response.getResponse().getHeader("Location").split("users/")[1])
-				.content(json(new User(null, "Robert Granted", true, "robert@email.com", "123456", now, new ArrayList<>())))
+				.content(json(new Card(null, "Robert Granted", true, "robert@email.com", "123456", now, new ArrayList<>())))
 				.headers(HEADERS))
 				.andExpect(status().isOk());
 		
 		mvc.perform(MockMvcRequestBuilders
 				.put(RESOURCE + "/0000000")
-				.content(json(new User(null, "Robert Granted", true, "robert@email.com", "123456", now, new ArrayList<>())))
+				.content(json(new Card(null, "Robert Granted", true, "robert@email.com", "123456", now, new ArrayList<>())))
 				.headers(HEADERS))
 				.andExpect(status().isNotFound());
 		
@@ -152,7 +150,7 @@ public class UserControllerTest {
 		RequestBuilder requestBuilder = 
 				MockMvcRequestBuilders
 							.post(RESOURCE)
-							.content(json(new User(null, "Joe Fletcher", true, "joe@email.com", "123456", now, new ArrayList<>())))
+							.content(json(new Card(null, "Joe Fletcher", true, "joe@email.com", "123456", now, new ArrayList<>())))
 							.headers(HEADERS); 
 				
 		MvcResult response = mvc.perform(requestBuilder).andExpect(status().isCreated()).andReturn();
@@ -175,8 +173,9 @@ public class UserControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get(RESOURCE + "/0000000")
 			.headers(HEADERS))
 			.andExpect(status().isNotFound())
-			.andExpect(content().string("User not found!"));
+			.andExpect(content().string("Card not found!"));
 		
 	}
+	*/
 
 }
