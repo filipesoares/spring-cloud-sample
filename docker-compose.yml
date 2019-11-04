@@ -28,8 +28,34 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: financer
       MYSQL_ROOT_PASSWORD: s3cr3t      
-  users-api:
-    container_name: users-api
+  users-api_1:
+    container_name: users-api_1
+    build: ./users-api
+    ports: 
+      - "8081:8081"
+    networks:
+      - financer-network
+    restart: always    
+    links: 
+      - config-server
+      - eureka-server
+      - mysqldb
+    depends_on:
+      - config-server
+      - eureka-server
+      - mysqldb
+    entrypoint: /bin/sh
+    environment: 
+      MYSQL_URL: jdbc:mysql://mysqldb:3306/financer
+      MYSQL_USER: root
+      MYSQL_PASSWORD: s3cr3t
+      EUREKA_SERVER: http://eureka-server:8761/eureka/
+    command: >
+      -c "
+      while ! (nc -z config-server 8888 && nc -z eureka-server 8761 && nc -z mysqldb 3306); do sleep 5; echo 'Waiting for other services to start-up...'; done;
+      java -Djava.security.egd=file:/dev/./urandom -jar -Dserver.port=8081 -Dspring.profiles.active=dev /users-api.jar"
+  users-api_2:
+    container_name: users-api_2
     build: ./users-api
     ports: 
       - "8082:8082"
@@ -53,7 +79,7 @@ services:
     command: >
       -c "
       while ! (nc -z config-server 8888 && nc -z eureka-server 8761 && nc -z mysqldb 3306); do sleep 5; echo 'Waiting for other services to start-up...'; done;
-      java -Djava.security.egd=file:/dev/./urandom -jar -Dspring.profiles.active=dev /users-api.jar"
+      java -Djava.security.egd=file:/dev/./urandom -jar -Dserver.port=8082 -Dspring.profiles.active=dev /users-api.jar"
   cards-api:
     container_name: cards-api
     build: ./cards-api
@@ -66,10 +92,14 @@ services:
       - config-server
       - eureka-server
       - mysqldb
+      - users-api_1
+      - users-api_2
     depends_on:
       - config-server
       - eureka-server
       - mysqldb
+      - users-api_1
+      - users-api_2
     entrypoint: /bin/sh
     environment: 
       MYSQL_URL: jdbc:mysql://mysqldb:3306/financer
@@ -90,7 +120,8 @@ services:
       - mongodb
     depends_on:
       - "mongodb"
-      - "users-api"
+      - users-api_1
+      - users-api_2
     env_file: ./accounts-api/.env
     networks:
       - financer-network    

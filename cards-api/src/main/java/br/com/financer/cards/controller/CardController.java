@@ -2,6 +2,7 @@ package br.com.financer.cards.controller;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
@@ -43,7 +44,13 @@ public class CardController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Card> fetch(@PathVariable("id") Long id){
-		return new ResponseEntity<Card>(service.fetch(id), HttpStatus.OK);
+		try {			
+			return new ResponseEntity<Card>(service.fetch(id), HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "An error occured", e);
+		}
 	}
 
 	@PostMapping
@@ -54,7 +61,10 @@ public class CardController {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setLocation(ucBuilder.path("/cards/{id}").buildAndExpand(card.getId()).toUri());
 			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+		} catch (EntityNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "An error occured", e);
 		}
 	}
@@ -62,7 +72,13 @@ public class CardController {
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<Card> update(@PathVariable("id") Long id, @RequestBody Card card, HttpServletRequest request) {
-		return new ResponseEntity<Card>(service.update(id, card), HttpStatus.OK);
+		try {			
+			return new ResponseEntity<Card>(service.update(id, card), HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "An error occured", e);
+		}
 	}
 
 	@DeleteMapping("/{id}")

@@ -43,7 +43,7 @@ public class Card implements Serializable {
 	private Brand brand;
 	private Integer close;
 	private Integer payment;
-	private String user;
+	private Long user;
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime created;
