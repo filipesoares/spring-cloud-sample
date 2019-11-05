@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import br.com.financer.cards.model.Card;
@@ -21,6 +23,9 @@ public class CardService {
 
 	private CardRepository repository;
 	private RestTemplate restTemplate;
+	
+	@Value("${users.service.uri}")
+	private String userService;
 
 	public CardService(CardRepository repository, RestTemplate restTemplate) {
 		this.repository = repository;
@@ -59,13 +64,14 @@ public class CardService {
 	}
 
 	private void findUser(final Long userId) throws EntityNotFoundException {
-		
-		ResponseEntity response = restTemplate.getForEntity("http://users-service/users/{id}", String.class, userId);
-		
-		log.info("Status Code : " + response.getStatusCodeValue());
-
-		if (response.getStatusCode().is4xxClientError())
-			throw new EntityNotFoundException();
+		try {
+			restTemplate.getForEntity(userService + "users/{id}", String.class, userId);
+		} catch (HttpClientErrorException e) {
+			log.info("User of id {0} not found!", userId);
+			if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+				throw new EntityNotFoundException();
+			}
+		}
 	}
 
 }
